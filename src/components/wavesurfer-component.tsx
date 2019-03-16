@@ -59,9 +59,8 @@ class WaveSurf extends React.Component<{
 
   public play() {
     const { wavesurfer, ready } = this.state;
-    debugger;
     if (ready) {
-      wavesurfer.playPause();
+      wavesurfer.play();
     }
   }
 
