@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import { PacmanLoader } from 'react-spinners';
 const WaveSurfer = require("wavesurfer.js");
 
 class WaveSurf extends React.Component<{
@@ -6,9 +7,8 @@ class WaveSurf extends React.Component<{
   color?: string
 },{
   isPlaying?: boolean,
-  waveformSVG?: any,
   wavesurfer?: any,
-  ready?: boolean
+  ready?: boolean,
 }> {
 
   constructor(props:any) {
@@ -16,7 +16,6 @@ class WaveSurf extends React.Component<{
 
     this.state = {
       isPlaying: false,
-      waveformSVG: null,
       wavesurfer: null,
       ready: false
     };
@@ -24,7 +23,6 @@ class WaveSurf extends React.Component<{
 
   public componentDidMount() {
     const { path, color } = this.props;
-    const { waveformSVG } = this.state;
     this.setupSurfer();
   }
 
@@ -74,6 +72,14 @@ class WaveSurf extends React.Component<{
   }
 
   public renderWaveSurfer() {
+    const {ready} = this.state;
+    if (!ready) {
+      return (
+        <div id="waveform-container" style={{width: '500px'}}>
+          <PacmanLoader loading={true} color={'#D736D3'} sizeUnit="px" size={80}/>
+        </div>
+      );
+    }
     return (
       <div id="waveform-container" style={{width: '500px'}}>
       </div>
@@ -81,6 +87,7 @@ class WaveSurf extends React.Component<{
   }
 
   public render() {
+    const {ready} = this.state;
     return (
       <div>
         {this.renderWaveSurfer()}
