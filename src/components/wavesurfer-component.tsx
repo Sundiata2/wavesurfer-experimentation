@@ -9,8 +9,8 @@ class WaveSurf extends React.Component<{
   isPlaying?: boolean,
   wavesurfer?: any,
   ready?: boolean,
-  currentTime?: string,
-  duration?: string
+  currentTime?: number,
+  duration?: number
 }> {
 
   constructor(props:any) {
@@ -20,8 +20,8 @@ class WaveSurf extends React.Component<{
       isPlaying: false,
       wavesurfer: null,
       ready: false,
-      currentTime: '0',
-      duration: '0'
+      currentTime: 0,
+      duration: 0
     };
   }
 
@@ -49,15 +49,16 @@ class WaveSurf extends React.Component<{
     wavesurfer.load(`${process.env.PUBLIC_URL}/audio/waitin.mp3`);
 
     wavesurfer.on('ready', () => {
-      const duration = wavesurfer.getDuration();
-      this.setState({ready: true, duration}), () => {
+      const duration = Number(wavesurfer.getDuration());
+      const formatted = Math.floor(duration);
+      this.setState({ready: true, duration: formatted}), () => {
         wavesurfer.play();
       }
     });
 
     wavesurfer.on('audioprocess', () => {
       this.setState({
-        currentTime: wavesurfer.getCurrentTime()
+        currentTime: Math.floor(Number(wavesurfer.getCurrentTime()))
       });
     });
 
