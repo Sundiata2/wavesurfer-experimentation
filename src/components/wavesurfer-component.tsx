@@ -9,6 +9,8 @@ class WaveSurf extends React.Component<{
   isPlaying?: boolean,
   wavesurfer?: any,
   ready?: boolean,
+  currentTime?: number,
+  duration?: number
 }> {
 
   constructor(props:any) {
@@ -17,7 +19,9 @@ class WaveSurf extends React.Component<{
     this.state = {
       isPlaying: false,
       wavesurfer: null,
-      ready: false
+      ready: false,
+      currentTime: 0,
+      duration: 0
     };
   }
 
@@ -45,9 +49,17 @@ class WaveSurf extends React.Component<{
     wavesurfer.load(`${process.env.PUBLIC_URL}/audio/waitin.mp3`);
 
     wavesurfer.on('ready', () => {
-      this.setState({ready: true}), () => {
+      const duration = Number(wavesurfer.getDuration());
+      const formatted = Math.floor(duration);
+      this.setState({ready: true, duration: formatted}), () => {
         wavesurfer.play();
       }
+    });
+
+    wavesurfer.on('audioprocess', () => {
+      this.setState({
+        currentTime: Math.floor(Number(wavesurfer.getCurrentTime()))
+      });
     });
 
     this.setState({
@@ -72,7 +84,7 @@ class WaveSurf extends React.Component<{
   }
 
   public renderWaveSurfer() {
-    const {ready} = this.state;
+    const {ready, wavesurfer} = this.state;
     if (!ready) {
       return (
         <div id="waveform-container" style={{width: '500px'}}>
@@ -93,6 +105,8 @@ class WaveSurf extends React.Component<{
         {this.renderWaveSurfer()}
         <div onClick={this.play.bind(this)} style={{cursor: 'pointer'}}>{'Play'}</div>
         <div onClick={this.pause.bind(this)} style={{cursor: 'pointer'}}>{'Pause'}</div>
+        <div>{this.state.currentTime}</div>
+        <div>{this.state.duration}</div>
       </div>
     );
   }
