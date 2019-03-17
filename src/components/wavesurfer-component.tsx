@@ -9,8 +9,8 @@ class WaveSurf extends React.Component<{
   isPlaying?: boolean,
   wavesurfer?: any,
   ready?: boolean,
-  currentTime?: number,
-  duration?: number
+  currentTime?: string,
+  duration?: string
 }> {
 
   constructor(props:any) {
@@ -20,8 +20,8 @@ class WaveSurf extends React.Component<{
       isPlaying: false,
       wavesurfer: null,
       ready: false,
-      currentTime: 0,
-      duration: 0
+      currentTime: '0',
+      duration: '0'
     };
   }
 
@@ -38,6 +38,20 @@ class WaveSurf extends React.Component<{
     }
   }
 
+  public convertSecondsToTimeString = (sec: number) => {
+    const delim = ':';
+  
+    const showWith0 = (value: number): string => {
+      return value < 10 ? `0${value}` : value.toString();
+    };
+  
+    const hours = showWith0(Math.floor((sec / (60 * 60)) % 60));
+    const minutes = showWith0(Math.floor((sec / 60) % 60));
+    const seconds = showWith0(Math.floor((sec) % 60));
+    return `${parseInt(hours) ? `${hours}${delim}` : ""}${minutes}${delim}${seconds}`;
+  }
+  
+
   public setupSurfer() {
     // Set up wavesurfer instance and methods here
     const wavesurfer = WaveSurfer.create({
@@ -50,7 +64,7 @@ class WaveSurf extends React.Component<{
 
     wavesurfer.on('ready', () => {
       const duration = Number(wavesurfer.getDuration());
-      const formatted = Math.floor(duration);
+      const formatted = this.convertSecondsToTimeString(Math.floor(duration));
       this.setState({ready: true, duration: formatted}), () => {
         wavesurfer.play();
       }
@@ -58,7 +72,7 @@ class WaveSurf extends React.Component<{
 
     wavesurfer.on('audioprocess', () => {
       this.setState({
-        currentTime: Math.floor(Number(wavesurfer.getCurrentTime()))
+        currentTime: this.convertSecondsToTimeString(Math.floor(Number(wavesurfer.getCurrentTime())))
       });
     });
 
